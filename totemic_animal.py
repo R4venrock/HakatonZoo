@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 
-bot = telebot.TeleBot('5162620077:AAEqhIq8RZpdxEa0MVElS_t8DLR_Sv96lY8')
+bot = telebot.TeleBot(os.environ.get('TOKEN'))
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -31,8 +31,8 @@ def func(message):
             connection = psycopg2.connect(
                 host='localhost',
                 user='postgres',
-                password='carlsson',
-                database='zoo')
+                password='password',
+                database='zoo_quiz')
             connection.autocommit = True
             # Создание курсора для базы данных
             with connection.cursor() as cursor:
