@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 
-bot = telebot.TeleBot('5162620077:AAEqhIq8RZpdxEa0MVElS_t8DLR_Sv96lY8')
+bot = telebot.TeleBot(os.environ.get('TOKEN'))
 
 conn = psycopg2.connect(
     host="localhost",
