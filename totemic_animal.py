@@ -26,37 +26,42 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def func(message):
     if message.text == 'Начать викторину':
-        try:
+                try:
             # Подключение к базе данных
             connection = psycopg2.connect(
                 host='localhost',
                 user='postgres',
-                password='password',
-                database='zoo_quiz')
+                password='carlsson',
+                database='zoo')
             connection.autocommit = True
             # Создание курсора для базы данных
             with connection.cursor() as cursor:
                 cursor.execute("""SELECT question FROM quiz WHERE id = 61""")
-                bot.send_message(message.chat.id, cursor.fetchone())
+                question = str(cursor.fetchone())
 
-                cursor.execute("""SELECT answer FROM quiz WHERE id = 61""")
-                bot.send_message(message.chat.id, cursor.fetchone())
-
+                cursor.execute("""SELECT answer FROM quiz WHERE id = 61 """)
+                answer_1 = str(cursor.fetchone())
                 cursor.execute("""SELECT answer FROM quiz WHERE id = 62""")
-                bot.send_message(message.chat.id, cursor.fetchone())
-
+                answer_2 = str(cursor.fetchone())
                 cursor.execute("""SELECT answer FROM quiz WHERE id = 63""")
-                bot.send_message(message.chat.id, cursor.fetchone())
+                answer_3 = str(cursor.fetchone())
+                cursor.execute("""SELECT answer FROM quiz WHERE id = 64""")
+                answer_4 = str(cursor.fetchone())
 
-                cursor.execute("""SELECT question FROM quiz WHERE id = 64""")
-                bot.send_message(message.chat.id, cursor.fetchone())
+                murkup = types.InlineKeyboardMarkup(row_width=1)
+                answer_1 = types.InlineKeyboardButton(text=answer_1, callback_data='answer_1')
+                answer_2 = types.InlineKeyboardButton(text=answer_2, callback_data='answer_2')
+                answer_3 = types.InlineKeyboardButton(text=answer_3, callback_data='answer_3')
+                answer_4 = types.InlineKeyboardButton(text=answer_4, callback_data='answer_4')
+
+                murkup.add(answer_1, answer_2, answer_3, answer_4)
+                bot.send_message(message.chat.id, question, reply_markup=murkup)
 
         except Exception as _ex:
             bot.send_message(message.chat.id, _ex)
         finally:
             if connection:
                 connection.close()
-
 
         # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
     elif message.text == 'Поделиться в VK':
