@@ -8,16 +8,7 @@ import os
 
 load_dotenv()
 
-bot = telebot.TeleBot(os.environ.get('TOKEN'))
-
-conn = psycopg2.connect(
-    host="localhost",
-    database="zoo_quiz",
-    user="postgres",
-    password="password"
-)
-cursor = conn.cursor()
-
+bot = telebot.TeleBot('5162620077:AAEqhIq8RZpdxEa0MVElS_t8DLR_Sv96lY8')
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -31,33 +22,41 @@ def start(message):
                          message.from_user),
                      reply_markup=murkup)
 
+
 @bot.message_handler(content_types=['text'])
 def func(message):
     if message.text == 'Начать викторину':
-        cursor.execute(
-                """SELECT question FROM quiz"""
-                )
-        bot.send_message(message.chat.id, cursor.fetchone())
-        cursor.execute(
-            """SELECT answer FROM quiz WHERE id = 61"""
-        )
-        bot.send_message(message.chat.id, cursor.fetchone())
-        conn.close()
-        cursor.execute(
-            """SELECT answer FROM quiz WHERE id = 62"""
-        )
-        bot.send_message(message.chat.id, cursor.fetchone())
-        conn.close()
-        cursor.execute(
-            """SELECT answer FROM quiz WHERE id = 63"""
-        )
-        bot.send_message(message.chat.id, cursor.fetchone())
-        conn.close()
-        cursor.execute(
-            """SELECT answer FROM quiz WHERE id = 64"""
-        )
-        bot.send_message(message.chat.id, cursor.fetchone())
-        conn.close()
+        try:
+            # Подключение к базе данных
+            connection = psycopg2.connect(
+                host='localhost',
+                user='postgres',
+                password='carlsson',
+                database='zoo')
+            connection.autocommit = True
+            # Создание курсора для базы данных
+            with connection.cursor() as cursor:
+                cursor.execute("""SELECT question FROM quiz WHERE id = 61""")
+                bot.send_message(message.chat.id, cursor.fetchone())
+
+                cursor.execute("""SELECT answer FROM quiz WHERE id = 61""")
+                bot.send_message(message.chat.id, cursor.fetchone())
+
+                cursor.execute("""SELECT answer FROM quiz WHERE id = 62""")
+                bot.send_message(message.chat.id, cursor.fetchone())
+
+                cursor.execute("""SELECT answer FROM quiz WHERE id = 63""")
+                bot.send_message(message.chat.id, cursor.fetchone())
+
+                cursor.execute("""SELECT question FROM quiz WHERE id = 64""")
+                bot.send_message(message.chat.id, cursor.fetchone())
+
+        except Exception as _ex:
+            bot.send_message(message.chat.id, _ex)
+        finally:
+            if connection:
+                connection.close()
+
 
         # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
     elif message.text == 'Поделиться в VK':
