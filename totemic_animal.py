@@ -71,5 +71,11 @@ def func(message):
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
 
+@bot.callback_query_handler(func=lambda call:True)
+def callback(call):
+    if call.message:
+        if call.data == 'answer_1':
+            #Добавляем балл
+            bot.send_message(call.message.chat.id, 'Всё получилось') '''Это проверка бота'''
 
 bot.polling(none_stop=True)
