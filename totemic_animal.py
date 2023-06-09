@@ -31,8 +31,8 @@ def func(message):
             connection = psycopg2.connect(
                 host='localhost',
                 user='postgres',
-                password='carlsson',
-                database='zoo')
+                password='password',
+                database='zoo_quiz')
             connection.autocommit = True
             # Создание курсора для базы данных
             with connection.cursor() as cursor:
