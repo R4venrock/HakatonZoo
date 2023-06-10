@@ -35,24 +35,17 @@ def func(message):
                 database='zoo_quiz')
             connection.autocommit = True
             # Создание курсора для базы данных
-            with connection.cursor() as cursor:
-                cursor.execute("""SELECT question FROM quiz WHERE id = 61""")
-                question = str(cursor.fetchone())
+                        with connection.cursor() as cursor:
+                cursor.execute('SELECT question FROM quiz WHERE id=%(id)s', dict)
+                question = list(cursor.fetchone())
+                cursor.execute('SELECT answer FROM quiz WHERE question = (SELECT question FROM quiz WHERE id=%(id)s)', dict)
 
-                cursor.execute("""SELECT answer FROM quiz WHERE id = 61 """)
-                answer_1 = str(cursor.fetchone())
-                cursor.execute("""SELECT answer FROM quiz WHERE id = 62""")
-                answer_2 = str(cursor.fetchone())
-                cursor.execute("""SELECT answer FROM quiz WHERE id = 63""")
-                answer_3 = str(cursor.fetchone())
-                cursor.execute("""SELECT answer FROM quiz WHERE id = 64""")
-                answer_4 = str(cursor.fetchone())
-
+                answer = list(cursor.fetchall())
                 murkup = types.InlineKeyboardMarkup(row_width=1)
-                answer_1 = types.InlineKeyboardButton(text=answer_1, callback_data='answer_1')
-                answer_2 = types.InlineKeyboardButton(text=answer_2, callback_data='answer_2')
-                answer_3 = types.InlineKeyboardButton(text=answer_3, callback_data='answer_3')
-                answer_4 = types.InlineKeyboardButton(text=answer_4, callback_data='answer_4')
+                answer_1 = types.InlineKeyboardButton(text=str(answer[0][0]), callback_data='answer_1')
+                answer_2 = types.InlineKeyboardButton(text=str(answer[1][0]), callback_data='answer_2')
+                answer_3 = types.InlineKeyboardButton(text=str(answer[2][0]), callback_data='answer_3')
+                answer_4 = types.InlineKeyboardButton(text=str(answer[3][0]), callback_data='answer_4')
 
                 murkup.add(answer_1, answer_2, answer_3, answer_4)
                 bot.send_message(message.chat.id, question, reply_markup=murkup)
@@ -63,6 +56,7 @@ def func(message):
             if connection:
                 connection.close()
 
+
         # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
     elif message.text == 'Поделиться в VK':
         # text = '[Поделиться](https://vk.com/share.php?https://t.me/my_reincarnation_bot)'  # только шаблон
@@ -70,12 +64,10 @@ def func(message):
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
-
 @bot.callback_query_handler(func=lambda call:True)
 def callback(call):
     if call.message:
         if call.data == 'answer_1':
-            #Добавляем балл
-            bot.send_message(call.message.chat.id, 'Всё получилось') '''Это проверка бота'''
+           pass
 
 bot.polling(none_stop=True)
