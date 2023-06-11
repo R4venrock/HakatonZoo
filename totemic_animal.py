@@ -64,10 +64,16 @@ def func(message):
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
-@bot.callback_query_handler(func=lambda call:True)
+        
 def callback(call):
-    if call.message:
-        if call.data == 'answer_1':
-           pass
+    try:
+        if call.message:
+            if call.data == 'answer_1':
+                with open('HakatonZoo\Без имени.jpg', 'rb') as f:
+                    bot.send_photo(call.message.chat.id, f)
+
+            bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
+    except Exception as e:
+        print(repr(e))
 
 bot.polling(none_stop=True)
