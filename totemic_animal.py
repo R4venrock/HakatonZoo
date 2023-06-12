@@ -113,7 +113,7 @@ def callback(call):
                 connection.commit()
                 bot.send_message(call.message.chat.id, text="Спасибо!")
             elif call.data == 'no':
-                bot.send_message(call.message.chat.id, text="имофей явно расстроится, возможно у вас найдётся пара слов хотя бы в его адрес?")
+                bot.send_message(call.message.chat.id, text="Тимофей явно расстроится, возможно у вас найдётся пара слов хотя бы в его адрес?")
 
             if dict['id'] < 71:
                 if call.data == 'answer_1':
