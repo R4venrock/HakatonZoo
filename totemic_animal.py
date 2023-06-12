@@ -23,38 +23,73 @@ def start(message):
                      reply_markup=murkup)
 
 
+dict = {'id': 61}
+def question(message):
+    try:
+        # Подключение к базе данных
+        connection = psycopg2.connect(
+            host='localhost',
+            user='postgres',
+            password='password',
+            database='zoo_quiz')
+        connection.autocommit = True
+        # Создание курсора для базы данных
+
+        with connection.cursor() as cursor:
+
+            cursor.execute('SELECT question FROM quiz WHERE id=%(id)s', dict)
+            question = list(cursor.fetchone())
+            cursor.execute('SELECT answer FROM quiz WHERE question = (SELECT question FROM quiz WHERE id=%(id)s)', dict)
+
+            answer = list(cursor.fetchall())
+            murkup_q = types.InlineKeyboardMarkup(row_width=1)
+            answer_1 = types.InlineKeyboardButton(text=str(answer[0][0]), callback_data='answer_1')
+            answer_2 = types.InlineKeyboardButton(text=str(answer[1][0]), callback_data='answer_2')
+            answer_3 = types.InlineKeyboardButton(text=str(answer[2][0]), callback_data='answer_3')
+            answer_4 = types.InlineKeyboardButton(text=str(answer[3][0]), callback_data='answer_4')
+
+            murkup_q.add(answer_1, answer_2, answer_3, answer_4)
+            bot.send_message(message.chat.id, question, reply_markup=murkup_q)
+    except Exception as _ex:
+        #bot.send_message(message.chat.id, _ex)
+        print('[INFO] Error while working with PostgreSQL', _ex)
+    finally:
+        if connection:
+            connection.close()
+
+@bot.callback_query_handler(func=lambda call:True)
+def callback(call):
+    try:
+        if call.message:
+            if dict['id'] < 73:
+                if call.data == 'answer_1':
+                    dict['id'] +=4
+                    question(message=call.message)
+                elif call.data == 'answer_2':
+                    dict['id'] += 4
+                    question(message=call.message)
+                elif call.data == 'answer_3':
+                    dict['id'] += 4
+                    question(message=call.message)
+                elif call.data == 'answer_4':
+                    dict['id'] += 4
+                    question(message=call.message)
+
+                with open('HakatonZoo\Без имени.jpg', 'rb') as f:
+                    bot.send_photo(call.message.chat.id, f)
+
+            bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
+    except Exception as e:
+        print(repr(e))
+
+
+
 @bot.message_handler(content_types=['text'])
 def func(message):
+
     if message.text == 'Начать викторину':
-                try:
-            # Подключение к базе данных
-            connection = psycopg2.connect(
-                host='localhost',
-                user='postgres',
-                password='password',
-                database='zoo_quiz')
-            connection.autocommit = True
-            # Создание курсора для базы данных
-                        with connection.cursor() as cursor:
-                cursor.execute('SELECT question FROM quiz WHERE id=%(id)s', dict)
-                question = list(cursor.fetchone())
-                cursor.execute('SELECT answer FROM quiz WHERE question = (SELECT question FROM quiz WHERE id=%(id)s)', dict)
+        question(message)
 
-                answer = list(cursor.fetchall())
-                murkup = types.InlineKeyboardMarkup(row_width=1)
-                answer_1 = types.InlineKeyboardButton(text=str(answer[0][0]), callback_data='answer_1')
-                answer_2 = types.InlineKeyboardButton(text=str(answer[1][0]), callback_data='answer_2')
-                answer_3 = types.InlineKeyboardButton(text=str(answer[2][0]), callback_data='answer_3')
-                answer_4 = types.InlineKeyboardButton(text=str(answer[3][0]), callback_data='answer_4')
-
-                murkup.add(answer_1, answer_2, answer_3, answer_4)
-                bot.send_message(message.chat.id, question, reply_markup=murkup)
-
-        except Exception as _ex:
-            bot.send_message(message.chat.id, _ex)
-        finally:
-            if connection:
-                connection.close()
 
 
         # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
@@ -64,16 +99,11 @@ def func(message):
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
-        
-def callback(call):
-    try:
-        if call.message:
-            if call.data == 'answer_1':
-                with open('HakatonZoo\Без имени.jpg', 'rb') as f:
-                    bot.send_photo(call.message.chat.id, f)
 
-            bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
-    except Exception as e:
-        print(repr(e))
+
+
+
+
 
 bot.polling(none_stop=True)
+
