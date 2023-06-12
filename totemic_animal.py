@@ -74,7 +74,7 @@ def callback(call):
                 elif call.data == 'answer_4':
                     dict['id'] += 4
                     question(message=call.message)
-
+            else:
                 with open('HakatonZoo\Без имени.jpg', 'rb') as f:
                     bot.send_photo(call.message.chat.id, f)
 
