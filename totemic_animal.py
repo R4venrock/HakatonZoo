@@ -112,7 +112,8 @@ def callback(call):
                 cursor.execute("INSERT INTO reviews (id_user, username, review) VALUES (%s, %s, %s)", (call.message.chat.id, username, review))
                 connection.commit()
                 bot.send_message(call.message.chat.id, text="Спасибо!")
-
+            elif call.data == 'no':
+                bot.send_message(call.message.chat.id, text="Нам очень жаль о принятом вами решении. Попробуйте пройти тест еще раз")
 
             if dict['id'] < 71:
                 if call.data == 'answer_1':
