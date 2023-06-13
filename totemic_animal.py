@@ -3,7 +3,7 @@ import telebot
 from telebot import types
 
 from dotenv import load_dotenv
-#from config import host, user, pasword, db_name
+from config import host, user, pasword, db_name
 import os
 
 load_dotenv()
@@ -18,7 +18,7 @@ animals = {'penguin': 0,
            'tiger': 0, 'eagle': 0,
            'bird_sec': 0, 'vicuna': 0,
            'cuscus': 0, 'crocodile': 0,
-           'manul': 0, 'seal': 0, 'otter': 0,}
+           'manul': 0,  'otter': 0,}
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -27,9 +27,12 @@ def start(message):
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton('Начать викторину')
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
-    btn3 = types.KeyboardButton('Поделиться в VK')
-    btn4 = types.KeyboardButton('Отзывы')
-    murkup.add(btn1, btn2, btn3, btn4)
+    btn3 = types.KeyboardButton('Поделиться в ВКонтакте')
+    btn4 = types.KeyboardButton('Поделиться в Одноклассниках')
+    btn5 = types.KeyboardButton('Поделиться в facebook')
+    btn6 = types.KeyboardButton('Поделиться в twitter')
+    btn7 = types.KeyboardButton('Отзывы')
+    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6,)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
                          message.from_user, photo),
@@ -44,7 +47,7 @@ def question(message):
             host='localhost',
             user='postgres',
             password='carlsson',
-            database='database_zoo')
+            database='full_database')
         connection.autocommit = True
         # Создание курсора для базы данных
 
@@ -82,10 +85,21 @@ def func(message):
         bot.register_next_step_handler(message, username)
 
      # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
-    elif message.text == 'Поделиться в VK':
-        # text = '[Поделиться](https://vk.com/share.php?https://t.me/my_reincarnation_bot)'  # только шаблон
-        text = '[Поделиться](https://vk.com/share.php?url=http%3A%2F%2Ft.me/my_reincarnation_bot%2Ftest-16576%3Fresult%3D02040206020504080203&title=Мой%20результат%20теста%3A%20КТО%20ТВОЕ%20ТОТЕМНОЕ%20ЖИВОТНОЕ%3F%20)'
+    elif message.text == 'Поделиться в ВКонтакте':
+        text = social_sharing.VK
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+    elif message.text == 'Поделиться в Одноклассниках':
+        text = social_sharing.OK
+        bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+    elif message.text == 'Поделиться в facebook':
+        text = social_sharing.FB
+        bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+    elif message.text == 'Поделиться в twitter':
+        text = social_sharing.TW
+        bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+        # elif message.text == 'Поделиться в Телеграм': # ссылка на публикацию в telegram (не работает) TODO
+        #     text = social_sharing.TG
+        #     bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
 
@@ -114,7 +128,7 @@ def callback(call):
                 host='localhost',
                 user='postgres',
                 password='carlsson',
-                database='database_zoo')
+                database='full_database')
             connection.autocommit = True
             cursor = connection.cursor()
             if call.data == 'yes':
@@ -126,75 +140,125 @@ def callback(call):
 
             if dict['id'] < 113:
                 if call.data == 'answer_1':
-                    cursor.execute('SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s', dict)
+                    cursor.execute('SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s', dict)
                     a = list(cursor.fetchall())
                     if a[0][0] == 1:
                         animals['penguin'] += 1
+                    elif a[0][0] == -1:
+                        animals['penguin'] -= 1
                     if a[0][1] == 1:
                         animals['owl'] += 1
+                    if a[0][1] == -1:
+                        animals['owl'] -= 1
                     if a[0][2] == 1:
                         animals['bear'] += 1
+                    if a[0][2] == -1:
+                        animals['bear'] -= 1
                     if a[0][3] == 1:
                         animals['lori'] += 1
+                    if a[0][3] == -1:
+                        animals['lori'] -= 1
                     if a[0][4] == 1:
                         animals['irbis'] += 1
+                    if a[0][4] == -1:
+                        animals['irbis'] -= 1
                     if a[0][5] == 1:
                         animals['tiger'] += 1
+                    if a[0][5] == -1:
+                        animals['tiger'] -= 1
                     if a[0][6] == 1:
                         animals['eagle'] += 1
+                    if a[0][6] == -1:
+                        animals['eagle'] -= 1
                     if a[0][7] == 1:
                         animals['bird_sec'] += 1
+                    if a[0][7] == -1:
+                        animals['bird_sec'] -= 1
                     if a[0][8] == 1:
                         animals['vicuna'] += 1
+                    if a[0][8] == -1:
+                        animals['vicuna'] -= 1
                     if a[0][9] == 1:
                         animals['cuscus'] += 1
+                    if a[0][9] == -1:
+                        animals['cuscus'] -= 1
                     if a[0][10] == 1:
                         animals['crocodile'] += 1
+                    if a[0][10] == -1:
+                        animals['crocodile'] -= 1
                     if a[0][11] == 1:
                         animals['manul'] += 1
+                    if a[0][11] == -1:
+                        animals['manul'] -= 1
+
                     if a[0][12] == 1:
-                        animals['seal'] += 1
-                    if a[0][13] == 1:
                         animals['otter'] += 1
+                    if a[0][12] == -1:
+                        animals['otter'] -= 1
                     dict['id'] +=4
                     if dict['id'] == 73:
                         dict['id'] = 89
                     question(message=call.message)
-                    
+
 
                 elif call.data == 'answer_2':
                     cursor.execute(
-                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s',
                         dict)
                     a = list(cursor.fetchall())
                     if a[0][0] == 1:
                         animals['penguin'] += 1
+                    elif a[0][0] == -1:
+                        animals['penguin'] -= 1
                     if a[0][1] == 1:
                         animals['owl'] += 1
+                    if a[0][1] == -1:
+                        animals['owl'] -= 1
                     if a[0][2] == 1:
                         animals['bear'] += 1
+                    if a[0][2] == -1:
+                        animals['bear'] -= 1
                     if a[0][3] == 1:
                         animals['lori'] += 1
+                    if a[0][3] == -1:
+                        animals['lori'] -= 1
                     if a[0][4] == 1:
                         animals['irbis'] += 1
+                    if a[0][4] == -1:
+                        animals['irbis'] -= 1
                     if a[0][5] == 1:
                         animals['tiger'] += 1
+                    if a[0][5] == -1:
+                        animals['tiger'] -= 1
                     if a[0][6] == 1:
                         animals['eagle'] += 1
+                    if a[0][6] == -1:
+                        animals['eagle'] -= 1
                     if a[0][7] == 1:
                         animals['bird_sec'] += 1
+                    if a[0][7] == -1:
+                        animals['bird_sec'] -= 1
                     if a[0][8] == 1:
                         animals['vicuna'] += 1
+                    if a[0][8] == -1:
+                        animals['vicuna'] -= 1
                     if a[0][9] == 1:
                         animals['cuscus'] += 1
+                    if a[0][9] == -1:
+                        animals['cuscus'] -= 1
                     if a[0][10] == 1:
                         animals['crocodile'] += 1
+                    if a[0][10] == -1:
+                        animals['crocodile'] -= 1
                     if a[0][11] == 1:
                         animals['manul'] += 1
+                    if a[0][11] == -1:
+                        animals['manul'] -= 1
+
                     if a[0][12] == 1:
-                        animals['seal'] += 1
-                    if a[0][13] == 1:
                         animals['otter'] += 1
+                    if a[0][12] == -1:
+                        animals['otter'] -= 1
                     dict['id'] += 4
                     if dict['id'] == 73:
                         dict['id'] = 89
@@ -203,37 +267,61 @@ def callback(call):
 
                 elif call.data == 'answer_3':
                     cursor.execute(
-                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s',
                         dict)
                     a = list(cursor.fetchall())
                     if a[0][0] == 1:
                         animals['penguin'] += 1
+                    elif a[0][0] == -1:
+                        animals['penguin'] -= 1
                     if a[0][1] == 1:
                         animals['owl'] += 1
+                    if a[0][1] == -1:
+                        animals['owl'] -= 1
                     if a[0][2] == 1:
                         animals['bear'] += 1
+                    if a[0][2] == -1:
+                        animals['bear'] -= 1
                     if a[0][3] == 1:
                         animals['lori'] += 1
+                    if a[0][3] == -1:
+                        animals['lori'] -= 1
                     if a[0][4] == 1:
                         animals['irbis'] += 1
+                    if a[0][4] == -1:
+                        animals['irbis'] -= 1
                     if a[0][5] == 1:
                         animals['tiger'] += 1
+                    if a[0][5] == -1:
+                        animals['tiger'] -= 1
                     if a[0][6] == 1:
                         animals['eagle'] += 1
+                    if a[0][6] == -1:
+                        animals['eagle'] -= 1
                     if a[0][7] == 1:
                         animals['bird_sec'] += 1
+                    if a[0][7] == -1:
+                        animals['bird_sec'] -= 1
                     if a[0][8] == 1:
                         animals['vicuna'] += 1
+                    if a[0][8] == -1:
+                        animals['vicuna'] -= 1
                     if a[0][9] == 1:
                         animals['cuscus'] += 1
+                    if a[0][9] == -1:
+                        animals['cuscus'] -= 1
                     if a[0][10] == 1:
                         animals['crocodile'] += 1
+                    if a[0][10] == -1:
+                        animals['crocodile'] -= 1
                     if a[0][11] == 1:
                         animals['manul'] += 1
+                    if a[0][11] == -1:
+                        animals['manul'] -= 1
                     if a[0][12] == 1:
-                        animals['seal'] += 1
-                    if a[0][13] == 1:
                         animals['otter'] += 1
+                    if a[0][12] == -1:
+                        animals['otter'] -= 1
                     dict['id'] += 4
                     if dict['id'] == 73:
                         dict['id'] = 89
@@ -242,37 +330,61 @@ def callback(call):
 
                 elif call.data == 'answer_4':
                     cursor.execute(
-                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s',
                         dict)
                     a = list(cursor.fetchall())
                     if a[0][0] == 1:
                         animals['penguin'] += 1
+                    elif a[0][0] == -1:
+                        animals['penguin'] -= 1
                     if a[0][1] == 1:
                         animals['owl'] += 1
+                    if a[0][1] == -1:
+                        animals['owl'] -= 1
                     if a[0][2] == 1:
                         animals['bear'] += 1
+                    if a[0][2] == -1:
+                        animals['bear'] -= 1
                     if a[0][3] == 1:
                         animals['lori'] += 1
+                    if a[0][3] == -1:
+                        animals['lori'] -= 1
                     if a[0][4] == 1:
                         animals['irbis'] += 1
+                    if a[0][4] == -1:
+                        animals['irbis'] -= 1
                     if a[0][5] == 1:
                         animals['tiger'] += 1
+                    if a[0][5] == -1:
+                        animals['tiger'] -= 1
                     if a[0][6] == 1:
                         animals['eagle'] += 1
+                    if a[0][6] == -1:
+                        animals['eagle'] -= 1
                     if a[0][7] == 1:
                         animals['bird_sec'] += 1
+                    if a[0][7] == -1:
+                        animals['bird_sec'] -= 1
                     if a[0][8] == 1:
                         animals['vicuna'] += 1
+                    if a[0][8] == -1:
+                        animals['vicuna'] -= 1
                     if a[0][9] == 1:
                         animals['cuscus'] += 1
+                    if a[0][9] == -1:
+                        animals['cuscus'] -= 1
                     if a[0][10] == 1:
                         animals['crocodile'] += 1
+                    if a[0][10] == -1:
+                        animals['crocodile'] -= 1
                     if a[0][11] == 1:
                         animals['manul'] += 1
+                    if a[0][11] == -1:
+                        animals['manul'] -= 1
                     if a[0][12] == 1:
-                        animals['seal'] += 1
-                    if a[0][13] == 1:
                         animals['otter'] += 1
+                    if a[0][12] == -1:
+                        animals['otter'] -= 1
                     dict['id'] += 4
                     if dict['id'] == 73:
                         dict['id'] = 89
@@ -281,9 +393,10 @@ def callback(call):
 
             elif dict['id'] == 113:
                 animal = max(animals, key=animals.get)
+                print(animals)
+
                 animal_dict = {'id': animal}
-                print(animals, animal,
-                      animal_dict)
+
                 cursor.execute('SELECT image, result_text FROM animal_results WHERE id=%(id)s', animal_dict)
                 itog_animal = list(cursor.fetchall())
 
