@@ -13,9 +13,12 @@ bot = telebot.TeleBot(os.environ.get('TOKEN'))
 review = ''
 username = ''
 animals = {'penguin': 0,
-          'owl': 0,
-          'bear': 0,
-           }
+          'owl': 0, 'bear': 0,
+           'lori': 0, 'irbis': 0,
+           'tiger': 0, 'eagle': 0,
+           'bird_sec': 0, 'vicuna': 0,
+           'cuscus': 0, 'crocodile': 0,
+           'manul': 0, 'seal': 0, 'otter': 0,}
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -41,7 +44,7 @@ def question(message):
             host='localhost',
             user='postgres',
             password='carlsson',
-            database='zoo')
+            database='database_zoo')
         connection.autocommit = True
         # Создание курсора для базы данных
 
@@ -111,7 +114,7 @@ def callback(call):
                 host='localhost',
                 user='postgres',
                 password='carlsson',
-                database='zoo')
+                database='database_zoo')
             connection.autocommit = True
             cursor = connection.cursor()
             if call.data == 'yes':
@@ -121,35 +124,168 @@ def callback(call):
             elif call.data == 'no':
                 bot.send_message(call.message.chat.id, text="Тимофей явно расстроится, возможно у вас найдётся пара слов хотя бы в его адрес?")
 
-            if dict['id'] < 71:
-                if call.data == 'answer_1':
-                    cursor.execute("SELECT penguin, owl, bear FROM quiz WHERE  id = 61")
-                    a = list(cursor.fetchall())
-                    if a[0][0] == 1:
-                        animals['penguin'] += 1
-                    if a[0][1] == 1:
-                        animals['owl'] += 1
-                    dict['id'] +=4
-                    question(message=call.message)
 
-                elif call.data == 'answer_2':
-                    dict['id'] += 4
-                    question(message=call.message)
-                    
-                elif call.data == 'answer_3':
-                    dict['id'] += 4
-                    question(message=call.message)
-                    
-                elif call.data == 'answer_4':
-                    dict['id'] += 4
-                    question(message=call.message)
-            else:
-                with open('HakatonZoo\Без имени.jpg', 'rb') as f:
-                    bot.send_photo(call.message.chat.id, f)
+            if call.data == 'answer_1':
+                cursor.execute('SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s', dict)
+                a = list(cursor.fetchall())
+                if a[0][0] == 1:
+                    animals['penguin'] += 1
+                if a[0][1] == 1:
+                    animals['owl'] += 1
+                if a[0][2] == 1:
+                    animals['bear'] += 1
+                if a[0][3] == 1:
+                    animals['lori'] += 1
+                if a[0][4] == 1:
+                    animals['irbis'] += 1
+                if a[0][5] == 1:
+                    animals['tiger'] += 1
+                if a[0][6] == 1:
+                    animals['eagle'] += 1
+                if a[0][7] == 1:
+                    animals['bird_sec'] += 1
+                if a[0][8] == 1:
+                    animals['vicuna'] += 1
+                if a[0][9] == 1:
+                    animals['cuscus'] += 1
+                if a[0][10] == 1:
+                    animals['crocodile'] += 1
+                if a[0][11] == 1:
+                    animals['manul'] += 1
+                if a[0][12] == 1:
+                    animals['seal'] += 1
+                if a[0][13] == 1:
+                    animals['otter'] += 1
+                dict['id'] +=4
+                if dict['id'] == 73:
+                    dict['id'] = 89
+                question(message=call.message)
 
-            bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
+            elif call.data == 'answer_2':
+                cursor.execute(
+                    'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                    dict)
+                a = list(cursor.fetchall())
+                if a[0][0] == 1:
+                    animals['penguin'] += 1
+                if a[0][1] == 1:
+                    animals['owl'] += 1
+                if a[0][2] == 1:
+                    animals['bear'] += 1
+                if a[0][3] == 1:
+                    animals['lori'] += 1
+                if a[0][4] == 1:
+                    animals['irbis'] += 1
+                if a[0][5] == 1:
+                    animals['tiger'] += 1
+                if a[0][6] == 1:
+                    animals['eagle'] += 1
+                if a[0][7] == 1:
+                    animals['bird_sec'] += 1
+                if a[0][8] == 1:
+                    animals['vicuna'] += 1
+                if a[0][9] == 1:
+                    animals['cuscus'] += 1
+                if a[0][10] == 1:
+                    animals['crocodile'] += 1
+                if a[0][11] == 1:
+                    animals['manul'] += 1
+                if a[0][12] == 1:
+                    animals['seal'] += 1
+                if a[0][13] == 1:
+                    animals['otter'] += 1
+                dict['id'] += 4
+                if dict['id'] == 73:
+                    dict['id'] = 89
+                question(message=call.message)
+
+            elif call.data == 'answer_3':
+                cursor.execute(
+                    'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                    dict)
+                a = list(cursor.fetchall())
+                if a[0][0] == 1:
+                    animals['penguin'] += 1
+                if a[0][1] == 1:
+                    animals['owl'] += 1
+                if a[0][2] == 1:
+                    animals['bear'] += 1
+                if a[0][3] == 1:
+                    animals['lori'] += 1
+                if a[0][4] == 1:
+                    animals['irbis'] += 1
+                if a[0][5] == 1:
+                    animals['tiger'] += 1
+                if a[0][6] == 1:
+                    animals['eagle'] += 1
+                if a[0][7] == 1:
+                    animals['bird_sec'] += 1
+                if a[0][8] == 1:
+                    animals['vicuna'] += 1
+                if a[0][9] == 1:
+                    animals['cuscus'] += 1
+                if a[0][10] == 1:
+                    animals['crocodile'] += 1
+                if a[0][11] == 1:
+                    animals['manul'] += 1
+                if a[0][12] == 1:
+                    animals['seal'] += 1
+                if a[0][13] == 1:
+                    animals['otter'] += 1
+                dict['id'] += 4
+                if dict['id'] == 73:
+                    dict['id'] = 89
+                question(message=call.message)
+
+            elif call.data == 'answer_4':
+                cursor.execute(
+                    'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, seal, otter FROM quiz WHERE id=%(id)s',
+                    dict)
+                a = list(cursor.fetchall())
+                if a[0][0] == 1:
+                    animals['penguin'] += 1
+                if a[0][1] == 1:
+                    animals['owl'] += 1
+                if a[0][2] == 1:
+                    animals['bear'] += 1
+                if a[0][3] == 1:
+                    animals['lori'] += 1
+                if a[0][4] == 1:
+                    animals['irbis'] += 1
+                if a[0][5] == 1:
+                    animals['tiger'] += 1
+                if a[0][6] == 1:
+                    animals['eagle'] += 1
+                if a[0][7] == 1:
+                    animals['bird_sec'] += 1
+                if a[0][8] == 1:
+                    animals['vicuna'] += 1
+                if a[0][9] == 1:
+                    animals['cuscus'] += 1
+                if a[0][10] == 1:
+                    animals['crocodile'] += 1
+                if a[0][11] == 1:
+                    animals['manul'] += 1
+                if a[0][12] == 1:
+                    animals['seal'] += 1
+                if a[0][13] == 1:
+                    animals['otter'] += 1
+                dict['id'] += 4
+                if dict['id'] == 73:
+                    dict['id'] = 89
+                question(message=call.message)
+
+            if dict['id'] > 112:
+                animal = max(animals, key=animals.get)
+                animal_dict = {'id': animal}
+                print(animals, animal,
+                      animal_dict)
+                cursor.execute('SELECT image FROM animal_results WHERE id=%(id)s', animal_dict)
+                itog_animal = list(cursor.fetchall())
+                bot.send_message(call.message.chat.id,
+                                 text=str(itog_animal[0][0]) + (itog_animal[1][0]))
+            #bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
     except Exception as e:
         print(repr(e))
 
 bot.polling(none_stop=True)
-
