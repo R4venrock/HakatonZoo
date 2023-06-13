@@ -13,7 +13,7 @@ bot = telebot.TeleBot(os.environ.get('TOKEN'))
 review = ''
 username = ''
 animals = {'penguin': 0,
-           'owl': 0, 'bear': 0,
+           'owl': 0, 'bear': 0,       
            'lori': 0, 'irbis': 0,
            'tiger': 0, 'eagle': 0,
            'bird_sec': 0, 'vicuna': 0,
@@ -38,7 +38,7 @@ def start(message):
                          message.from_user, photo),
                      reply_markup=murkup)
 
-
+    
 dict = {'id': 61}
 def question(message):
     try:
@@ -83,7 +83,7 @@ def func(message):
         bot.send_message(message.from_user.id, 'Как Вас зовут?')
         bot.register_next_step_handler(message, username)
 
-    # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
+     # в elif добавил кнопку на VK (затем перенесем в нужное место) TODO
     elif message.text == 'Поделиться в ВКонтакте':
         text = social_sharing.VK
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
@@ -102,14 +102,14 @@ def func(message):
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
 
-
+        
 def username(message):
     global username
     username = message.text
     bot.send_message(message.from_user.id, 'Оставьте, пожалуйста свой отзыв о боте')
     bot.register_next_step_handler(message, reviews)
 
-
+    
 def reviews(message):
     global review
     review = message.text
@@ -117,7 +117,7 @@ def reviews(message):
     key_yes = types.InlineKeyboardButton(text='Отправить', callback_data='yes')
     key_no = types.InlineKeyboardButton(text='Нет', callback_data='no')
 
-    keyboard.add(key_yes, key_no)
+    keyboard .add(key_yes, key_no)
     bot.send_message(message.from_user.id, text='Отправить отзыв?', reply_markup=keyboard)
 
 
@@ -200,7 +200,7 @@ def callback(call):
                         animals['otter'] += 1
                     if a[0][12] == -1:
                         animals['otter'] -= 1
-                    dict['id'] += 4
+                    dict['id'] +=4
                     if dict['id'] == 73:
                         dict['id'] = 89
 
