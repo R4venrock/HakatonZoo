@@ -45,9 +45,9 @@ def question(message):
         # Подключение к базе данных
         connection = psycopg2.connect(
             host='localhost',
-            user='postgres',
-            password='carlsson',
-            database='full_database')
+            user='user',
+            password='password',
+            database='d_b')
         connection.autocommit = True
         # Создание курсора для базы данных
 
@@ -126,9 +126,9 @@ def callback(call):
         if call.message:
             connection = psycopg2.connect(
                 host='localhost',
-                user='postgres',
-                password='carlsson',
-                database='full_database')
+                user='user',
+                password='password',
+                database='d_b')
             connection.autocommit = True
             cursor = connection.cursor()
             if call.data == 'yes':
@@ -392,8 +392,16 @@ def callback(call):
 
 
             elif dict['id'] == 113:
-                animal = max(animals, key=animals.get)
-                print(animals)
+                            elif dict['id'] == 113:
+                maxx = 0
+                list_max = []
+                for elem in animals:
+                    if animals[elem] > maxx:
+                        maxx = animals[elem]
+                for elem in animals:
+                    if animals[elem] == maxx:
+                        list_max.append(elem)
+                animal = random.choice(list_max)
 
                 animal_dict = {'id': animal}
 
@@ -406,5 +414,4 @@ def callback(call):
             #bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
     except Exception as e:
         print(repr(e))
-
 bot.polling(none_stop=True)
