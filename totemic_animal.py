@@ -32,7 +32,7 @@ def start(message):
     btn5 = types.KeyboardButton('Поделиться в facebook')
     btn6 = types.KeyboardButton('Поделиться в twitter')
     btn7 = types.KeyboardButton('Отзывы')
-    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6,)
+    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
                          message.from_user, photo),
