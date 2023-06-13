@@ -13,5 +13,7 @@ FB = '[Поделиться](https://www.facebook.com/sharer/sharer.php?src=sdkp
 # ссылка на публикацию в twitter
 TW = '[Поделиться](https://twitter.com/intent/tweet?url=https://t.me/my_reincarnation_bot)'
 
-# ссылка на публикацию в telegram (не работает) TODO
-# TG = '[Поделиться] (https://telegram.me/share/url?url=https://t.me/my_reincarnation_bot)'
+# ссылка на публикацию в telegram
+TG = '[Поделиться](https://t.me/share/url?url=https%3A%2F%2Ft.me/my_reincarnation_bot)'
+
+

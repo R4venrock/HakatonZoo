@@ -25,14 +25,14 @@ animals = {'penguin': 0,
 def start(message):
     with open('HakatonZoo\photo_2023-06-13_12-14-34.jpg', 'rb') as f:
         photo = bot.send_photo(message.chat.id, f)
-    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
     btn1 = types.KeyboardButton('Начать викторину')
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
     btn3 = types.KeyboardButton('Поделиться в ВКонтакте')
-    btn4 = types.KeyboardButton('Отзывы')
+    btn4 = types.KeyboardButton('Поделиться в Одноклассниках')
     btn5 = types.KeyboardButton('Поделиться в Телеграм')
     btn6 = types.KeyboardButton('Отзывы')
-    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6)
+        markup.add(btn1, btn2, btn3, btn4, btn5, btn6)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
                          message.from_user, photo),
@@ -100,7 +100,7 @@ def func(message):
         #     text = social_sharing.TG
         #     bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
-        bot.send_message(message.chat.id, text='В данный момент всё в разработке')
+        bot.send_message(message.chat.id, text='В данный момент в разработке')
 
         
 def username(message):
