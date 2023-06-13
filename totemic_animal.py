@@ -2,9 +2,9 @@ import psycopg2 as psycopg2
 import telebot
 from telebot import types
 from dotenv import load_dotenv
-from config import host, user, pasword, db_name
 import os
 import social_sharing
+import random
 
 load_dotenv()
 
@@ -13,18 +13,19 @@ bot = telebot.TeleBot(os.environ.get('TOKEN'))
 review = ''
 username = ''
 animals = {'penguin': 0,
-          'owl': 0, 'bear': 0,
+           'owl': 0, 'bear': 0,       
            'lori': 0, 'irbis': 0,
            'tiger': 0, 'eagle': 0,
            'bird_sec': 0, 'vicuna': 0,
            'cuscus': 0, 'crocodile': 0,
-           'manul': 0,  'otter': 0,}
+           'manul': 0, 'otter': 0, }
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
     with open('HakatonZoo\photo_2023-06-13_12-14-34.jpg', 'rb') as f:
-         photo = bot.send_photo(message.chat.id, f)
-    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        photo = bot.send_photo(message.chat.id, f)
+    murkup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     btn1 = types.KeyboardButton('Начать викторину')
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
     btn3 = types.KeyboardButton('Поделиться в ВКонтакте')
@@ -41,10 +42,10 @@ def question(message):
     try:
         # Подключение к базе данных
         connection = psycopg2.connect(
-            host='localhost',
-            user='user',
-            password='password',
-            database='d_b')
+            host=os.environ.get('localhost'),
+            user=os.environ.get('user'),
+            password=os.environ.get('password'),
+            database=os.environ.get('db_name'))
         connection.autocommit = True
         # Создание курсора для базы данных
 
@@ -74,7 +75,6 @@ def question(message):
 
 @bot.message_handler(content_types=['text'])
 def func(message):
-
     if message.text == 'Начать викторину':
         question(message)
     elif message.text == 'Отзывы':
@@ -100,12 +100,14 @@ def func(message):
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
 
+        
 def username(message):
     global username
     username = message.text
     bot.send_message(message.from_user.id, 'Оставьте, пожалуйста свой отзыв о боте')
     bot.register_next_step_handler(message, reviews)
 
+    
 def reviews(message):
     global review
     review = message.text
@@ -122,22 +124,26 @@ def callback(call):
     try:
         if call.message:
             connection = psycopg2.connect(
-                host='localhost',
-                user='user',
-                password='password',
-                database='d_b')
+                host=os.environ.get('localhost'),
+                user=os.environ.get('user'),
+                password=os.environ.get('password'),
+                database=os.environ.get('db_name'))
             connection.autocommit = True
             cursor = connection.cursor()
             if call.data == 'yes':
-                cursor.execute("INSERT INTO reviews (id_user, username, review) VALUES (%s, %s, %s)", (call.message.chat.id, username, review))
+                cursor.execute("INSERT INTO reviews (id_user, username, review) VALUES (%s, %s, %s)",
+                               (call.message.chat.id, username, review))
                 connection.commit()
                 bot.send_message(call.message.chat.id, text="Спасибо!")
             elif call.data == 'no':
-                bot.send_message(call.message.chat.id, text="Тимофей явно расстроится, возможно у вас найдётся пара слов хотя бы в его адрес?")
+                bot.send_message(call.message.chat.id,
+                                 text="Тимофей явно расстроится, возможно у вас найдётся пара слов хотя бы в его адрес?")
 
             if dict['id'] < 113:
                 if call.data == 'answer_1':
-                    cursor.execute('SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s', dict)
+                    cursor.execute(
+                        'SELECT penguin, owl, bear, lori, irbis, tiger, eagle, bird_sec, vicuna, cuscus, crocodile, manul, otter FROM quiz WHERE id=%(id)s',
+                        dict)
                     a = list(cursor.fetchall())
                     if a[0][0] == 1:
                         animals['penguin'] += 1
@@ -389,27 +395,28 @@ def callback(call):
                     question(message=call.message)
 
 
-            elif dict['id'] == 113:
-                            elif dict['id'] == 113:
-                maxx = 0
-                list_max = []
-                for elem in animals:
-                    if animals[elem] > maxx:
-                        maxx = animals[elem]
-                for elem in animals:
-                    if animals[elem] == maxx:
-                        list_max.append(elem)
-                animal = random.choice(list_max)
+                elif dict['id'] == 113:
+                    maxx = 0
+                    list_max = []
+                    for elem in animals:
+                        if animals[elem] > maxx:
+                            maxx = animals[elem]
+                    for elem in animals:
+                        if animals[elem] == maxx:
+                            list_max.append(elem)
+                    animal = random.choice(list_max)
 
-                animal_dict = {'id': animal}
+                    animal_dict = {'id': animal}
 
-                cursor.execute('SELECT image, result_text FROM animal_results WHERE id=%(id)s', animal_dict)
-                itog_animal = list(cursor.fetchall())
+            cursor.execute('SELECT image, result_text FROM animal_results WHERE id=%(id)s', animal_dict)
+            itog_animal = list(cursor.fetchall())
 
-                bot.send_message(call.message.chat.id,
-                                 text=str(itog_animal[0][1]) +' '+ str(itog_animal[0][0]) + ' ' + 'Может ты хочешь опекать своё тотемное животное? Узнать подробности можно тут: +7 (958) 813-15-60 либо по почте a.sharapova@moscowzoo.ru')
-                dict['id'] = 61
-            #bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
-    except Exception as e:
-        print(repr(e))
+            bot.send_message(call.message.chat.id,
+                             text=str(itog_animal[0][1]) + ' ' + str(itog_animal[0][
+                                                                         0]) + ' ' + 'Может ты хочешь опекать своё тотемное животное? Узнать подробности можно тут: +7 (958) 813-15-60 либо по почте a.sharapova@moscowzoo.ru')
+            dict['id'] = 61
+        # bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
+
+except Exception as e:
+print(repr(e))
 bot.polling(none_stop=True)
