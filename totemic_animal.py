@@ -30,7 +30,9 @@ def start(message):
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
     btn3 = types.KeyboardButton('Поделиться в ВКонтакте')
     btn4 = types.KeyboardButton('Отзывы')
-    murkup.add(btn1, btn2, btn3, btn4)
+    btn5 = types.KeyboardButton('Поделиться в Телеграм')
+    btn6 = types.KeyboardButton('Отзывы')
+    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
                          message.from_user, photo),
@@ -38,16 +40,14 @@ def start(message):
 
 
 dict = {'id': 61}
-
-
 def question(message):
     try:
         # Подключение к базе данных
         connection = psycopg2.connect(
-            host='localhost',
-            user='user',
-            password='password',
-            database='d_b')
+            host=os.environ.get('localhost'),
+            user=os.environ.get('user'),
+            password=os.environ.get('password'),
+            database=os.environ.get('db_name'))
         connection.autocommit = True
         # Создание курсора для базы данных
 
@@ -90,12 +90,12 @@ def func(message):
     elif message.text == 'Поделиться в Одноклассниках':
         text = social_sharing.OK
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
-    elif message.text == 'Поделиться в facebook':
-        text = social_sharing.FB
+    elif message.text == 'Поделиться в Телеграм':
+        text = social_sharing.TG
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
-    elif message.text == 'Поделиться в twitter':
-        text = social_sharing.TW
-        bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+    elif message.text == 'Отзывы':
+        bot.send_message(message.from_user.id, 'Как Вас зовут?')
+        bot.register_next_step_handler(message, username)
         # elif message.text == 'Поделиться в Телеграм': # ссылка на публикацию в telegram (не работает) TODO
         #     text = social_sharing.TG
         #     bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
