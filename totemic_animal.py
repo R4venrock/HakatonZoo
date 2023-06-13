@@ -20,8 +20,8 @@ def start(message):
     btn4 = types.KeyboardButton('Поделиться в Одноклассниках')
     btn5 = types.KeyboardButton('Поделиться в facebook')
     btn6 = types.KeyboardButton('Поделиться в twitter')
-    # btn7 = types.KeyboardButton('Поделиться в Телеграм')  # ссылка на публикацию в telegram (не работает) TODO
-    markup.add(btn1, btn2, btn3, btn4, btn5, btn6,)
+    btn7 = types.KeyboardButton('Поделиться в Телеграм')
+    markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7,)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Кнопки под окном чата помогут сориентироваться".format(
                          message.from_user),
@@ -44,9 +44,9 @@ def func(message):
     elif message.text == 'Поделиться в twitter':
         text = social_sharing.TW
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
-    # elif message.text == 'Поделиться в Телеграм': # ссылка на публикацию в telegram (не работает) TODO
-    #     text = social_sharing.TG
-    #     bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
+    elif message.text == 'Поделиться в Телеграм':
+        text = social_sharing.TG
+        bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
     else:
         bot.send_message(message.chat.id, text='В данный момент всё в разработке')
 
