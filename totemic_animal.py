@@ -12,9 +12,15 @@ bot = telebot.TeleBot(os.environ.get('TOKEN'))
 
 review = ''
 username = ''
+animals = {'penguin': 0,
+          'owl': 0,
+          'bear': 0,
+           }
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    with open('HakatonZoo\photo_2023-06-13_12-14-34.jpg', 'rb') as f:
+         photo = bot.send_photo(message.chat.id, f)
     murkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton('Начать викторину')
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
@@ -22,8 +28,8 @@ def start(message):
     btn4 = types.KeyboardButton('Отзывы')
     murkup.add(btn1, btn2, btn3, btn4)
     bot.send_message(message.chat.id,
-                     text="Привет, {0.first_name}! Кнопки под окном чата помогут сориентироваться".format(
-                         message.from_user),
+                     text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
+                         message.from_user, photo),
                      reply_markup=murkup)
 
 
@@ -101,14 +107,14 @@ def reviews(message):
 def callback(call):
     try:
         if call.message:
+            connection = psycopg2.connect(
+                host='localhost',
+                user='postgres',
+                password='carlsson',
+                database='zoo')
+            connection.autocommit = True
+            cursor = connection.cursor()
             if call.data == 'yes':
-                connection = psycopg2.connect(
-                    host='localhost',
-                    user='postgres',
-                    password='carlsson',
-                    database='zoo')
-                connection.autocommit = True
-                cursor = connection.cursor()
                 cursor.execute("INSERT INTO reviews (id_user, username, review) VALUES (%s, %s, %s)", (call.message.chat.id, username, review))
                 connection.commit()
                 bot.send_message(call.message.chat.id, text="Спасибо!")
@@ -117,16 +123,23 @@ def callback(call):
 
             if dict['id'] < 71:
                 if call.data == 'answer_1':
+                    cursor.execute("SELECT penguin, owl, bear FROM quiz WHERE  id = 61")
+                    a = list(cursor.fetchall())
+                    if a[0][0] == 1:
+                        animals['penguin'] += 1
+                    if a[0][1] == 1:
+                        animals['owl'] += 1
                     dict['id'] +=4
-                    #bot.delete_message(call.message.chat.id, call.message.message_id + 1)
                     question(message=call.message)
 
                 elif call.data == 'answer_2':
                     dict['id'] += 4
                     question(message=call.message)
+                    
                 elif call.data == 'answer_3':
                     dict['id'] += 4
                     question(message=call.message)
+                    
                 elif call.data == 'answer_4':
                     dict['id'] += 4
                     question(message=call.message)
@@ -139,3 +152,4 @@ def callback(call):
         print(repr(e))
 
 bot.polling(none_stop=True)
+
