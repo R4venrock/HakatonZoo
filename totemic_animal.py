@@ -93,8 +93,6 @@ def func(message):
     elif message.text == 'Поделиться в Телеграм':
         text = social_sharing.TG
         bot.send_message(message.chat.id, text, parse_mode='MarkdownV2')
-    elif message.text == 'Пройти викторину еще раз':
-        question(message)
     elif message.text == 'Отзывы':
         bot.send_message(message.from_user.id, 'Как Вас зовут?')
         bot.register_next_step_handler(message, username)
