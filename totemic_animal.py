@@ -1,10 +1,10 @@
 import psycopg2 as psycopg2
 import telebot
 from telebot import types
-
 from dotenv import load_dotenv
 from config import host, user, pasword, db_name
 import os
+import social_sharing
 
 load_dotenv()
 
@@ -28,17 +28,14 @@ def start(message):
     btn1 = types.KeyboardButton('Начать викторину')
     btn2 = types.KeyboardButton('❓Задать вопрос❓')
     btn3 = types.KeyboardButton('Поделиться в ВКонтакте')
-    btn4 = types.KeyboardButton('Поделиться в Одноклассниках')
-    btn5 = types.KeyboardButton('Поделиться в facebook')
-    btn6 = types.KeyboardButton('Поделиться в twitter')
-    btn7 = types.KeyboardButton('Отзывы')
-    murkup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
+    btn4 = types.KeyboardButton('Отзывы')
+    murkup.add(btn1, btn2, btn3, btn4)
     bot.send_message(message.chat.id,
                      text="Привет, {0.first_name}! Меня зовут Тимофей, я манул, являюсь символом зоопарка с 1983 (или какого там) года. И сегодня я расскажу тебе кое-что интересное😏 Но для начала попробуй пройти небольшую викторину😊".format(
                          message.from_user, photo),
                      reply_markup=murkup)
 
-
+    
 dict = {'id': 61}
 def question(message):
     try:
@@ -68,7 +65,7 @@ def question(message):
             bot.send_message(message.chat.id, question, reply_markup=murkup_q)
 
     except Exception as _ex:
-        #bot.send_message(message.chat.id, _ex)
+        # bot.send_message(message.chat.id, _ex)
         print('[INFO] Error while working with PostgreSQL', _ex)
     finally:
         if connection:
@@ -120,7 +117,7 @@ def reviews(message):
     bot.send_message(message.from_user.id, text='Отправить отзыв?', reply_markup=keyboard)
 
 
-@bot.callback_query_handler(func=lambda call:True)
+@bot.callback_query_handler(func=lambda call: True)
 def callback(call):
     try:
         if call.message:
@@ -198,6 +195,7 @@ def callback(call):
                     dict['id'] +=4
                     if dict['id'] == 73:
                         dict['id'] = 89
+
                     question(message=call.message)
 
 
@@ -409,7 +407,7 @@ def callback(call):
                 itog_animal = list(cursor.fetchall())
 
                 bot.send_message(call.message.chat.id,
-                                 text=str(itog_animal[0][1]) +' '+ str(itog_animal[0][0]))
+                                 text=str(itog_animal[0][1]) +' '+ str(itog_animal[0][0]) + ' ' + 'Может ты хочешь опекать своё тотемное животное? Узнать подробности можно тут: +7 (958) 813-15-60 либо по почте a.sharapova@moscowzoo.ru')
                 dict['id'] = 61
             #bot.answer_callback_query(callback_query_id=call.id, show_alert=False)
     except Exception as e:
